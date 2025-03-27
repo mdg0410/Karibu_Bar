@@ -1,0 +1,1 @@
+// Este archivo está destinado a contener la lógica de servicios, como la integración con bases de datos o APIs externas. Inicialmente estará vacío.

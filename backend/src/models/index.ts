@@ -1,0 +1,1 @@
+// Este archivo está destinado a definir los esquemas de Mongoose. Inicialmente estará vacío.
