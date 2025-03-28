@@ -2,19 +2,24 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './slices/authSlice';
+import cartReducer from './slices/cartSlice';
+import notificationReducer from './slices/notificationSlice';
+import dashboardReducer from './slices/dashboardSlice';
 
-// Placeholder para futuros reducers
 const rootReducer = {
   auth: authReducer,
-  // Aquí se agregarán los slices a medida que se creen
+  cart: cartReducer,
+  notifications: notificationReducer, // Cambiado de "notification" a "notifications"
+  dashboard: dashboardReducer,
+  // Aquí se agregarán más slices a medida que se creen
 };
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([
-      // Aquí podemos añadir middleware personalizado
-    ]),
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
   devTools: process.env.NODE_ENV !== 'production',
 });
 
@@ -28,3 +33,5 @@ export type AppDispatch = typeof store.dispatch;
 // Hooks personalizados
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+export default store;

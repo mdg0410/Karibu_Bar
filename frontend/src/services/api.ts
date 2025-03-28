@@ -1,40 +1,44 @@
 import axios from 'axios';
 
-// Determinar la URL base según el entorno
-const isProduction = process.env.NODE_ENV === 'production';
-const baseURL = isProduction
-  ? 'https://api.karaokekaribu.com/api'
-  : 'http://localhost:5000/api';
-
-// Crear instancia de axios
+// Crear instancia de Axios con configuración base
 const api = axios.create({
-  baseURL,
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor para añadir el token a las peticiones
+// Interceptor para agregar token de autenticación a las solicitudes
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Interceptor para manejar errores de respuesta
+// Interceptor para manejar respuestas y errores
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
-    // Manejar errores comunes como 401 (no autorizado)
+    // Manejar errores de autenticación (401)
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+    
+    // Manejar errores de servidor (500)
+    if (error.response && error.response.status >= 500) {
+      console.error('Error del servidor:', error);
+    }
+    
     return Promise.reject(error);
   }
 );
